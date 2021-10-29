@@ -3,6 +3,7 @@ Create the .yaml for each experiment
 """
 import os
 
+USE_AZURE = True
 
 def create_configuration(cfg, cfg_file):
     cfg['save_name'] = "{alg}_{dataset}_{num_lb}_{seed}".format(
@@ -36,6 +37,8 @@ def create_base_config(alg, seed,
                        ):
     cfg = {}
 
+    cfg['use_azure'] = USE_AZURE
+    
     # save config
     cfg['save_dir'] = './saved_models'
     cfg['save_name'] = None

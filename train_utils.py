@@ -164,6 +164,10 @@ class TBLog:
                 return
             self.writer.plot_stats()
             self.writer.dump_stats()
+            if self.use_azure:
+                from azure_utils import save_to_azure
+                save_to_azure(os.path.join(self.tb_dir, "tensorboard"),
+                              os.path.join(self.tb_dir.split("/")[-1], "tensorboard"))
 
 
 class AverageMeter(object):
