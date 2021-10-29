@@ -136,14 +136,15 @@ class TBLog:
     The tensorboard is saved at os.path.join(tb_dir, file_name).
     """
 
-    def __init__(self, tb_dir, file_name, writer_type="custom"):
+    def __init__(self, tb_dir, file_name, writer_type="custom", use_azure=False):
         self.tb_dir = tb_dir
         self.writer_type = writer_type
         if self.writer_type == "tensorboard":
             self.writer = SummaryWriter(os.path.join(self.tb_dir, file_name))
         elif self.writer_type == "custom":
             self.writer = CustomWriter(os.path.join(self.tb_dir, file_name))
-
+        self.use_azure = use_azure
+        
     def update(self, tb_dict, it, suffix=None, mode="train"):
         """
         Args
