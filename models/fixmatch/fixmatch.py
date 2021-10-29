@@ -194,7 +194,14 @@ class FixMatch:
                 if not args.multiprocessing_distributed or \
                         (args.multiprocessing_distributed and args.rank % ngpus_per_node == 0):
                     self.save_model('latest_model.pth', save_path)
-
+                    if args.use_azure:
+                        try:
+                            from azure_utils import save_to_azure
+                            save_to_azure(os.path.join(args.save_dir, args.save_name, "latest_model.pth"),
+                                          os.path.join(args.save_name, "latest_model.pth"))
+                        except:
+                            self.print_fn("Failed to save latest_model.pth to Azure")
+                            
             if self.it % self.num_eval_iter == 0:
                 eval_dict = self.evaluate(args=args)
                 tb_dict.update(eval_dict)
@@ -211,9 +218,24 @@ class FixMatch:
                 if not args.multiprocessing_distributed or \
                         (args.multiprocessing_distributed and args.rank % ngpus_per_node == 0):
 
+                    if args.use_azure:
+                        try:
+                            from azure_utils import save_to_azure
+                            save_to_azure(os.path.join(args.save_dir, args.save_name, "log.txt"),
+                                          os.path.join(args.save_name, "log.txt"))
+                        except:
+                            self.print_fn("Failed to save log.txt to Azure")
+                            
                     if self.it == best_it:
                         self.save_model('model_best.pth', save_path)
-
+                        if args.use_azure:
+                            try:
+                                from azure_utils import save_to_azure
+                                save_to_azure(os.path.join(args.save_dir, args.save_name, "model_best.pth"),
+                                            os.path.join(args.save_name, "model_best.pth"))
+                            except:
+                                self.print_fn("Failed to save model_best.pth to Azure")
+                            
                     if not self.tb_log is None:
                         self.tb_log.update(tb_dict, self.it)
 

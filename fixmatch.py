@@ -94,7 +94,7 @@ def main_worker(gpu, ngpus_per_node, args):
     logger_level = "WARNING"
     tb_log = None
     if args.rank % ngpus_per_node == 0:
-        tb_log = TBLog(save_path, 'tensorboard')
+        tb_log = TBLog(save_path, 'tensorboard', use_azure=args.use_azure)
         logger_level = "INFO"
 
     logger = get_logger(args.save_name, save_path, logger_level)
@@ -192,7 +192,15 @@ def main_worker(gpu, ngpus_per_node, args):
         lb_dset = image_loader.get_lb_train_data()
         ulb_dset = image_loader.get_ulb_train_data()
         eval_dset = image_loader.get_lb_test_data()
-                            
+    
+    if args.use_azure == True:
+        try:
+            from azure_utils import save_to_azure
+            os.rename('sampled_label_idx.json', 'fixmatch_sampled_label_idx.json')
+            save_to_azure('fixmatch_sampled_label_idx.json', os.path.join(args.save_name, 'fixmatch_sampled_label_idx.json'))
+        except:
+            print("Failed to save sampled_label_idx.json to Azure")
+                     
     loader_dict = {}
     dset_dict = {'train_lb': lb_dset, 'train_ulb': ulb_dset, 'eval': eval_dset}
 
@@ -334,7 +342,12 @@ if __name__ == "__main__":
                              'multi node data parallel training')
     # config file
     parser.add_argument('--c', type=str, default='')
-
+    '''
+    Azure configuration
+    '''
+    parser.add_argument('--use_azure', type=str2bool, default=False,
+                                    help='use azure')
+    
     args = parser.parse_args()
     over_write_args_from_file(args, args.c)
     main(args)

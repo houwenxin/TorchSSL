@@ -195,7 +195,7 @@ def main_worker(gpu, ngpus_per_node, args):
         try:
             from azure_utils import save_to_azure
             os.rename('sampled_label_idx.json', 'flexmatch_sampled_label_idx.json')
-            save_to_azure('./sampled_label_idx.json', os.path.join(args.save_name, 'flexmatch_sampled_label_idx.json'))
+            save_to_azure('flexmatch_sampled_label_idx.json', os.path.join(args.save_name, 'flexmatch_sampled_label_idx.json'))
         except:
             print("Failed to save sampled_label_idx.json to Azure")
 
